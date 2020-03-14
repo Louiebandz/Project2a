@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 
-public class BP {
-    //creating a BikePart class
+
 
     /**
      * I Pledge....
@@ -9,6 +8,7 @@ public class BP {
      * @author Brittany Margelos
      * @author Benjamin Hichak
      * @author Luis Maldonado
+     * BikePart v2
      */
 
     class BikePart {
@@ -161,4 +161,4 @@ public class BP {
         }
     }//end of BikePart class
 
-}
+
