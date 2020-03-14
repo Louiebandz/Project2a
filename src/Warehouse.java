@@ -1,3 +1,7 @@
-public class Warehouse {
+interface warehouse{
+        
+}
+
+public class Warehouse implements warehouse{
 
 }
