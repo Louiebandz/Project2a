@@ -1,7 +1,5 @@
-interface warehouse{
-        
-}
+import java.util.ArrayList;
+public class Warehouse {
 
-public class Warehouse implements warehouse{
 
 }

@@ -10,6 +10,9 @@ import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import static java.awt.Color.black;
+import static java.awt.Color.red;
+
 public class Main {
     /**
      *
@@ -26,7 +29,7 @@ public class Main {
      */
     public static void Choices() throws IOException {
         ArrayList<BikePart> WareHouse = new ArrayList<>();
-        FileInputStream fileIn = new FileInputStream("warehouseDB.txt");
+        FileInputStream fileIn = new FileInputStream("WHmain");
         Scanner readLn = new Scanner(fileIn);
 
         while (readLn.hasNext()) {
@@ -44,11 +47,11 @@ public class Main {
             Choice = Choice.toUpperCase();
             switch (Choice) {
                 case "READ":
-                    System.out.println("\n"+"Enter the File you would like to read:" );
-                    String inFileName = Input.next();
-                    //User enters the name of the file ( in this case "inventory2.txt")
-                    //reading in a file
-                    try {
+                    try{
+                        System.out.println("Enter the File you would like to read:" );
+                        String inFileName = Input.next();
+                        //User enters the name of the file ( in this case "inventory2.txt")
+                        //reading in a file
                         Scanner fIn = new Scanner(new FileInputStream(inFileName));
                         while (fIn.hasNext()) {
                             String nextLn = fIn.nextLine();
@@ -70,31 +73,35 @@ public class Main {
 
                         }
 
-                        System.out.println("Read line " + inFileName + " was read successfully. \n");
+                        System.out.println(inFileName + " was read successfully. \n");
                     } catch (FileNotFoundException e) {
-                        System.err.println("File " + inFileName + " does not exist.");
+                        System.err.println("File does not exist.");
                         System.out.println("");
                     }// end of catch FileNotFoundException
                     break;
                 case "ENTER":
-                    System.out.println("Enter Bike Part Details by Part Name,Part Number,List Price,Sale Price,Sale Status, Quantity:\nExample: (WTB_saddle,1234567890,33.00,25.58,false,1)");
-                    String eInfo = Input.next();
-                    boolean efound = false;
-                    int eIndex = 0;
-                    BikePart ePart = new BikePart(eInfo);
-                    for (int d = 0; d < WareHouse.size(); d++) {
-                        int pNext = WareHouse.get(d).getPartNumber();
-                        if (ePart.getPartNumber() == pNext) {
-                            efound = true;
-                            eIndex = d;
+                    try {
+                        System.out.println("Enter Bike Part Details by Part Name,Part Number,List Price,Sale Price,Sale Status, Quantity:\nExample: (WTB_saddle,1234567890,33.00,25.58,false,1)");
+                        String eInfo = Input.next();
+                        boolean efound = false;
+                        int eIndex = 0;
+                        BikePart ePart = new BikePart(eInfo);
+                        for (int d = 0; d < WareHouse.size(); d++) {
+                            int pNext = WareHouse.get(d).getPartNumber();
+                            if (ePart.getPartNumber() == pNext) {
+                                efound = true;
+                                eIndex = d;
+                            }
                         }
+                        if (efound) {
+                            WareHouse.get(eIndex).setQuantity(WareHouse.get(eIndex).getQuantity() + ePart.getQuantity());
+                        } else {
+                            WareHouse.add(ePart);
+                        }
+                        System.out.println("");
+                    }catch(Exception e){
+                        System.err.println("Incorrect Input"+"\n");
                     }
-                    if (efound) {
-                        WareHouse.get(eIndex).setQuantity(WareHouse.get(eIndex).getQuantity() + ePart.getQuantity());
-                    } else {
-                        WareHouse.add(ePart);
-                    }
-                    System.out.println("");
                     break;
                 case "SELL":
                     DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -149,7 +156,7 @@ public class Main {
                         }
                     }
                     if (!Found) {
-                        System.err.println("\n"+"The part was not found \n");
+                        System.err.println("The part was not found"+" \n");
                     } else {
                         System.out.println("\n"+ WareHouse.get(nIndex).getName() + " " + "Cost: " + pDisplay + " " + WareHouse.get(nIndex).getQuantity() + "\n");
                     }
@@ -175,7 +182,7 @@ public class Main {
                         }
                         System.out.println("");
                     }else{
-                        System.err.println("\n"+"Warehouse is empty." + "\n");
+                        System.err.println("Warehouse is empty." + "\n");
                     }
                     break;
                 case "SORTNUMBER":
@@ -197,7 +204,7 @@ public class Main {
                         }
                         System.out.println("");
                     }else{
-                        System.err.println("\n" +"Warehouse is empty.  :( "+"\n");
+                        System.err.println("Warehouse is empty."+"\n");
                     }
                     break;
                 case "QUIT":
@@ -210,7 +217,7 @@ public class Main {
                     pWriter.close();
                     break;
                 default:
-                    System.err.println("\n" + "Invalid Input!" + "\n" + "Please Enter Another Choice:" + "\n");
+                    System.err.println("\n" + "Invalid Input!" + "\n" + "Please Enter Another Choice." + "\n");
 
             }
 
@@ -229,3 +236,7 @@ public class Main {
     }
 
 }
+
+
+
+
