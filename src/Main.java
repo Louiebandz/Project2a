@@ -211,7 +211,7 @@ public class Main {
                     for (int k = 0; k < WareHouse.size(); k++) {
                         pWriter.println(WareHouse.get(k).getInfo());
                     }
-                    pWriter.close();
+                    pWriter.close() ;
                     break;
                 default:
                     System.err.println("\n" + "Invalid Input!" + "\n" + "Please Enter Another Choice." + "\n");
