@@ -10,9 +10,6 @@ import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import static java.awt.Color.black;
-import static java.awt.Color.red;
-
 public class Main {
     /**
      *
@@ -28,14 +25,14 @@ public class Main {
      * @throws IOException for reading in a file
      */
     public static void Choices() throws IOException {
-        ArrayList<BikePart> WareHouse = new ArrayList<>();
+        Warehouse mainWarehouse = new Warehouse("MainWareHouse");
+        ArrayList<Warehouse> AllWH = new ArrayList<Warehouse>();
         FileInputStream fileIn = new FileInputStream("WHmain");
         Scanner readLn = new Scanner(fileIn);
-
         while (readLn.hasNext()) {
             String nLine = readLn.nextLine();
             BikePart dbPart = new BikePart(nLine);
-            WareHouse.add(dbPart);
+            mainWarehouse.addToInventory(dbPart);
         }
         fileIn.close();
         Scanner Input = new Scanner(System.in);
@@ -58,17 +55,17 @@ public class Main {
                             boolean rfound = false;
                             int rIndex = 0;
                             BikePart ePart = new BikePart(nextLn);
-                            for (int d = 0; d < WareHouse.size(); d++) {
-                                int pNext = WareHouse.get(d).getPartNumber();
+                            for (int d = 0; d < mainWarehouse.getInventory().size(); d++) {
+                                int pNext = mainWarehouse.getInventory().get(d).getPartNumber();
                                 if (ePart.getPartNumber() == pNext) {
                                     rfound = true;
                                     rIndex = d;
                                 }
                             }
                             if (rfound) {
-                                WareHouse.get(rIndex).setQuantity(WareHouse.get(rIndex).getQuantity() + ePart.getQuantity());
+                                mainWarehouse.getInventory().get(rIndex).setQuantity(mainWarehouse.getInventory().get(rIndex).getQuantity() + ePart.getQuantity());
                             } else {
-                                WareHouse.add(ePart);
+                                mainWarehouse.getInventory().add(ePart);
                             }
 
                         }

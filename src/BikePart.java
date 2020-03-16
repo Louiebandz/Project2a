@@ -17,7 +17,7 @@ import java.util.ArrayList;
         private double price, salesPrice;
         private boolean onSale;
         private int quantity;
-        private ArrayList<BikePart> part;
+
         /**
          * This constructs a bike part that has a specified a part name, a part number,
          * the price, the sale price, whether the bike part is on sale, quantity, and arrayList of bike parts
@@ -39,7 +39,6 @@ import java.util.ArrayList;
                 onSale = false;
             }
             this.quantity = Integer.parseInt(temp[5]);
-            this.part = new ArrayList<BikePart>();
 
         }//end of BikePart constructor
 
