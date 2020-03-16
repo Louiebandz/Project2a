@@ -55,17 +55,17 @@ public class Main {
                             boolean rfound = false;
                             int rIndex = 0;
                             BikePart ePart = new BikePart(nextLn);
-                            for (int d = 0; d < mainWarehouse.getInventory().size(); d++) {
-                                int pNext = mainWarehouse.getInventory().get(d).getPartNumber();
+                            for (int d = 0; d < mainWarehouse.Inventory().size(); d++) {
+                                int pNext = mainWarehouse.Inventory().get(d).getPartNumber();
                                 if (ePart.getPartNumber() == pNext) {
                                     rfound = true;
                                     rIndex = d;
                                 }
                             }
                             if (rfound) {
-                                mainWarehouse.getInventory().get(rIndex).setQuantity(mainWarehouse.getInventory().get(rIndex).getQuantity() + ePart.getQuantity());
+                                mainWarehouse.Inventory().get(rIndex).setQuantity(mainWarehouse.Inventory().get(rIndex).getQuantity() + ePart.getQuantity());
                             } else {
-                                mainWarehouse.getInventory().add(ePart);
+                                mainWarehouse.Inventory().add(ePart);
                             }
 
                         }

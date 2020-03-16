@@ -2,19 +2,19 @@ import java.util.ArrayList;
 
 public class Warehouse {
     private String WarehouseName;
-    private ArrayList<BikePart> Inventory;
+    private ArrayList<BikePart> Contents;
 
     public Warehouse(String name){
         this.WarehouseName = name;
     }
     public void addToInventory(BikePart part){
-        Inventory.add(part);
+        Contents.add(part);
     }
     public BikePart getPartFromInventory(int index){
-        return Inventory.get(index);
+        return Contents.get(index);
     }
-    public ArrayList<BikePart> getInventory(){
-        return Inventory;
+    public ArrayList<BikePart> Inventory(){
+        return Contents;
     }
 
 }
