@@ -3,12 +3,10 @@
 //Ben Hichak
 //Luis Maldonado
 import java.io.*;
+import java.util.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Scanner;
-import java.util.ArrayList;
-import java.util.Collections;
+
 
 public class Main {
     /**
@@ -39,7 +37,7 @@ public class Main {
         String Choice = "";
 
         while (!Choice.equalsIgnoreCase("Quit")) {
-            System.out.println("Please select an option: \n" + "Read: Read an inventory delivery file \n" + "Enter: Enter a part \n" + "Sell: Sell a part \n" + "Display: display a part \n" + "SortName: Sort and Display parts by name \n" + "SortNumber: Sort parts by part name \n" + "Enter a choice:");
+            System.out.println("Please select an option: \n" + "Read: Read an InitialInventory.txt delivery file \n" + "Enter: Enter a part \n" + "Sell: Sell a part \n" + "Display: display a part \n" + "SortName: Sort and Display parts by name \n" + "SortNumber: Sort parts by part name \n" + "Transfer: Move inventory between warehouses \n" + "Create: Add sales van to fleet \n" + "Enter a choice:");
             Choice = Input.next();
             Choice = Choice.toUpperCase();
             switch (Choice) {
@@ -47,8 +45,7 @@ public class Main {
                     try{
                         System.out.println("Enter the File you would like to read:" );
                         String inFileName = Input.next();
-                        //User enters the name of the file ( in this case "inventory2.txt")
-                        //reading in a file
+
                         Scanner fIn = new Scanner(new FileInputStream(inFileName));
                         while (fIn.hasNext()) {
                             String nextLn = fIn.nextLine();
@@ -83,17 +80,17 @@ public class Main {
                         boolean efound = false;
                         int eIndex = 0;
                         BikePart ePart = new BikePart(eInfo);
-                        for (int d = 0; d < WareHouse.size(); d++) {
-                            int pNext = WareHouse.get(d).getPartNumber();
+                        for (int d = 0; d < mainWarehouse.Inventory().size(); d++) {
+                            int pNext = mainWarehouse.Inventory().get(d).getPartNumber();
                             if (ePart.getPartNumber() == pNext) {
                                 efound = true;
                                 eIndex = d;
                             }
                         }
                         if (efound) {
-                            WareHouse.get(eIndex).setQuantity(WareHouse.get(eIndex).getQuantity() + ePart.getQuantity());
+                            mainWarehouse.Inventory().get(eIndex).setQuantity(mainWarehouse.Inventory().get(eIndex).getQuantity() + ePart.getQuantity());
                         } else {
-                            WareHouse.add(ePart);
+                            mainWarehouse.Inventory().add(ePart);
                         }
                         System.out.println("");
                     }catch(Exception e){
@@ -138,16 +135,16 @@ public class Main {
                     boolean isSale = false;
                     boolean Found = false;
                     double pDisplay = 0.0;
-                    for (int l = 0; l < WareHouse.size(); l++) {
-                        String cName = WareHouse.get(l).getName();
+                    for (int l = 0; l < mainWarehouse.Inventory().size(); l++) {
+                        String cName = mainWarehouse.Inventory().get(l).getName();
                         if (cName.equals(pName)) {
-                            nIndex = getIndex(WareHouse, WareHouse.get(l));
-                            isSale = WareHouse.get(nIndex).getOnSale();
+                            nIndex = getIndex(mainWarehouse.Inventory(), mainWarehouse.Inventory().get(l));
+                            isSale = mainWarehouse.Inventory().get(nIndex).getOnSale();
                             Found = true;
                             if (isSale) {
-                                pDisplay = WareHouse.get(nIndex).getSalesPrice();
+                                pDisplay = mainWarehouse.Inventory().get(nIndex).getSalesPrice();
                             } else {
-                                pDisplay = WareHouse.get(nIndex).getPrice();
+                                pDisplay = mainWarehouse.Inventory().get(nIndex).getPrice();
                             }
 
                         }
@@ -155,7 +152,7 @@ public class Main {
                     if (!Found) {
                         System.err.println("The part was not found"+" \n");
                     } else {
-                        System.out.println("\n"+ WareHouse.get(nIndex).getName() + " " + "Cost: " + pDisplay + " " + WareHouse.get(nIndex).getQuantity() + "\n");
+                        System.out.println("\n"+ mainWarehouse.Inventory().get(nIndex).getName() + " " + "Cost: " + pDisplay + " " + mainWarehouse.Inventory().get(nIndex).getQuantity() + "\n");
                     }
 
                     break;
@@ -213,6 +210,20 @@ public class Main {
                     }
                     pWriter.close() ;
                     break;
+                case "TRANSFER":
+                    break;
+
+                case "CREATE":
+                    System.out.println("Please enter the name of the sales van \n" + "Example: 'SalesVan' + input = SalesVan(input)");
+                    String whName = Input.next();
+                    Warehouse newWarehouse = new Warehouse("SalesVan"+ whName);
+                    AllWH.add(newWarehouse);
+                    System.out.println("New sales van "+ newWarehouse.getWarehouseName()+ " has been created successfully.");
+                    final Formatter x;
+                    x = new Formatter("SaleVan" + whName +".txt");
+                    
+                    break;
+
                 default:
                     System.err.println("\n" + "Invalid Input!" + "\n" + "Please Enter Another Choice." + "\n");
 

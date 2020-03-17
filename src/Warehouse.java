@@ -15,6 +15,10 @@ public class Warehouse {
     }
     public ArrayList<BikePart> Inventory(){
         return Contents;
+
+    }
+    public String getWarehouseName(){
+        return this.WarehouseName;
     }
 
 }
