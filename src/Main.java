@@ -221,7 +221,7 @@ public class Main {
                     System.out.println("New sales van "+ newWarehouse.getWarehouseName()+ " has been created successfully.");
                     final Formatter x;
                     x = new Formatter("SaleVan" + whName +".txt");
-                    
+
                     break;
 
                 default:
