@@ -3,6 +3,7 @@
 //Ben Hichak
 //Luis Maldonado
 import java.io.*;
+import java.sql.SQLOutput;
 import java.util.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -23,16 +24,26 @@ public class Main {
      * @throws IOException for reading in a file
      */
     public static void Choices() throws IOException {
-        Warehouse mainWarehouse = new Warehouse("MainWareHouse");
         ArrayList<Warehouse> AllWH = new ArrayList<Warehouse>();
-        FileInputStream fileIn = new FileInputStream("WHmain");
-        Scanner readLn = new Scanner(fileIn);
-        while (readLn.hasNext()) {
-            String nLine = readLn.nextLine();
-            BikePart dbPart = new BikePart(nLine);
-            mainWarehouse.addToInventory(dbPart);
+
+        Warehouse mainWarehouse = new Warehouse("MainWareHouse");
+        fillWarehouse(mainWarehouse);
+        AllWH.add(mainWarehouse);
+
+        FileInputStream VanFile = new FileInputStream("AddedSalesVans.txt");
+        Scanner readVanLn = new Scanner(VanFile);
+        while(readVanLn.hasNext()){
+            String nName = readVanLn.nextLine();
+            Warehouse nextVan = new Warehouse(nName);
+            AllWH.add(nextVan);
+            fillWarehouse(nextVan);
         }
-        fileIn.close();
+
+
+
+
+
+
         Scanner Input = new Scanner(System.in);
         String Choice = "";
 
@@ -100,7 +111,16 @@ public class Main {
                 case "SELL":
                     DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
                     Calendar calObj = Calendar.getInstance();
-                    System.out.println("Please enter the Part Number: ");
+
+                    System.out.println("Specify the source Warehouse:");
+
+                    System.out.println("Choices: " + getWHchoices(AllWH));
+
+                    
+
+
+
+                    System.out.println("\n Please enter the Part Number: ");
                     int PartNumber = Input.nextInt();
                     int uIndex = 0;
                     boolean found = false;
@@ -221,7 +241,11 @@ public class Main {
                     System.out.println("New sales van "+ newWarehouse.getWarehouseName()+ " has been created successfully.");
                     final Formatter x;
                     x = new Formatter("SaleVan" + whName +".txt");
-
+                    File VanOut = new File("AddedSalesVan.txt");
+                    FileWriter vfWriter = new FileWriter(VanOut);
+                    PrintWriter vpWriter = new PrintWriter(vfWriter);
+                    vpWriter.println(whName);
+                    vpWriter.close();
                     break;
 
                 default:
@@ -239,10 +263,29 @@ public class Main {
      * @param part bike part array of parts
      * @return the array list parts
      */
-    public static int getIndex (ArrayList list, BikePart part){
+    public static int getIndex (ArrayList<BikePart> list, BikePart part){
         return list.indexOf(part);
     }
+    public static void fillWarehouse(Warehouse current) throws IOException {
+        String fileName = current.getTxtFileName();
+        FileInputStream fileIN = new FileInputStream(fileName);
+        Scanner readLn = new Scanner(fileIN);
+        while(readLn.hasNext()){
+            String nLine = readLn.nextLine();
+            BikePart dbPart = new BikePart(nLine);
+            current.addToInventory(dbPart);
+        }
+        fileIN.close();
+    }
+    public static String getWHchoices(ArrayList<Warehouse> AllWH){
+        StringBuilder choices = new StringBuilder();
 
+        for(Warehouse nWare : AllWH){
+            String nWareName = nWare.getWarehouseName();
+            choices.append(nWareName);
+        }
+        return choices.toString();
+    }
 }
 
 
