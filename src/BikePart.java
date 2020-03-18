@@ -1,8 +1,4 @@
-import java.util.ArrayList;
-
-
-
-    /**
+/**
      * I Pledge....
      * This class stores information about a bike part
      * @author Brittany Margelos

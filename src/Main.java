@@ -2,8 +2,6 @@
 //Brittany Margelos
 //Ben Hichak
 //Luis Maldonado
-import org.w3c.dom.ls.LSOutput;
-
 import java.io.*;
 import java.util.*;
 import java.text.DateFormat;
@@ -41,7 +39,7 @@ public class Main {
             String nName = readVanLn.nextLine();
             Warehouse nextVan = new Warehouse(nName);
             AllWH.add(nextVan);
-            nextVan.setTxtFileName("SaleVan" + nName + ".txt");
+            nextVan.setTxtFileName(nName + ".txt");
             fillWarehouse(nextVan);
         }
         VanFile.close();
@@ -257,12 +255,13 @@ public class Main {
                 case "CREATE":
                     System.out.println("Please enter the name of the sales van \n" + "Example: 'SalesVan' + input = SalesVan(input)");
                     String whName = Input.next();
-                    Warehouse newWarehouse = new Warehouse("SalesVan"+ whName);
+                    String fullName = "SaleVan" + whName;
+                    Warehouse newWarehouse = new Warehouse(fullName);
                     AllWH.add(newWarehouse);
-                    newWarehouse.setTxtFileName("SaleVan" + whName+ ".txt");
+                    newWarehouse.setTxtFileName(fullName+ ".txt");
                     System.out.println("\n New sales van "+ newWarehouse.getWarehouseName()+ " has been created successfully.\n");
                     final Formatter x;
-                    x = new Formatter("SaleVan" + whName +".txt");
+                    x = new Formatter(fullName+".txt");
                     File VanOut = new File("AddedSalesVan.txt");
                     FileWriter vfWriter = new FileWriter(VanOut);
                     PrintWriter vpWriter = new PrintWriter(vfWriter);
@@ -322,13 +321,6 @@ public class Main {
                                 System.out.println("Part is not available for transfer.");
                             }
                         }
-
-
-
-
-
-
-
                     }else{
                         System.out.println("Error!!, Must be at least 2 Warehouses Present.");
                     }
