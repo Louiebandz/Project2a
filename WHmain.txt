@@ -1,4 +1,4 @@
-WTB_saddle,1234567890,33.0,25.58,false,15
+WTB_saddle,1234567890,33.0,25.58,false,0
 26inTube,1234567891,7.0,5.58,true,25
 seatPost,1234567892,17.0,15.21,true,25
 700-25SwhalbeTire,1234567895,50.0,40.5,true,20

@@ -275,11 +275,7 @@ public class Main {
                         System.out.println("Choices: " + getWHchoices(AllWH) + "\n" + "Enter Choices exactly as represented in choices!\n");
                         System.out.println("Please specify the source Warehouse:");
                         String sourceWH = Input.next();
-                        System.out.println("Please Specify the destination Warehouse:");
-                        String destinationWH = Input.next();
                         boolean foundSource = false;
-                        boolean foundDestination = false;
-
                         Warehouse currentSource = null;
                         for (Warehouse searchW : AllWH) {
                             if (searchW.getWarehouseName().equals(sourceWH)) {
@@ -287,7 +283,18 @@ public class Main {
                                 foundSource = true;
                             }
                         }
+                        if(!foundSource){
+                            System.out.println("Source warehouse not found. \n");
+                            break;
+                        }
 
+                        if(currentSource.Inventory().size() == 0  ) {
+                            System.out.println("No parts available for transfer.\n");
+                            break;
+                        }
+                        System.out.println("Please Specify the destination Warehouse:");
+                        String destinationWH = Input.next();
+                        boolean foundDestination = false;
                         Warehouse currentDestination = null;
                         for (Warehouse searchW : AllWH) {
                             if (searchW.getWarehouseName().equals(destinationWH)) {
@@ -295,14 +302,11 @@ public class Main {
                                 foundDestination = true;
                             }
                         }
-                        assert currentSource != null;
+                        if(!foundDestination){
+                            System.out.println("Destination warehouse not found. \n");
+                            break;
 
-                        if(!foundSource) {
-                            System.out.println("Source warehouse not found.");
-                        }else if(!foundDestination) {
-                            System.out.println("Destination warehouse not found.");
-                        }else if(currentSource.Inventory().size() == 0){
-                            System.out.println("Part(s) not available for transfer.");
+
                         }else{
                             System.out.println("Please enter the PartNumber for the part you would like to Transfer:");
                             int transpNum = Integer.parseInt(Input.next());
@@ -317,7 +321,7 @@ public class Main {
                             if(tpFound){
                                 System.out.println("Enter the quantity you would like to Transfer:");
                                 int transQuant = Input.nextInt();
-                                if(transPart.getQuantity() != 0 || transPart.getQuantity() <= transQuant){
+                                if(transPart.getQuantity() > 0 && transPart.getQuantity() >= transQuant){
                                     transPart.setQuantity(transPart.getQuantity()- transQuant);
                                     BikePart newTpart = new BikePart(transPart.getInfo());
                                     assert currentDestination != null;
