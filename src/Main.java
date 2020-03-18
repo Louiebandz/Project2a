@@ -39,7 +39,7 @@ public class Main {
             String nName = readVanLn.nextLine();
             Warehouse nextVan = new Warehouse(nName);
             AllWH.add(nextVan);
-            nextVan.setTxtFileName("SaleVan" + nName + ".txt");
+            nextVan.setTxtFileName(nName + ".txt");
             fillWarehouse(nextVan);
         }
         VanFile.close();
@@ -265,7 +265,7 @@ public class Main {
                     File VanOut = new File("AddedSalesVan.txt");
                     FileWriter vfWriter = new FileWriter(VanOut);
                     PrintWriter vpWriter = new PrintWriter(vfWriter);
-                    vpWriter.println(whName);
+                    vpWriter.println(fullName);
                     x.close();
                     vfWriter.close();
                     vpWriter.close();
@@ -277,22 +277,32 @@ public class Main {
                         String sourceWH = Input.next();
                         System.out.println("Please Specify the destination Warehouse:");
                         String destinationWH = Input.next();
+                        boolean foundSource = false;
+                        boolean foundDestination = false;
 
                         Warehouse currentSource = null;
                         for (Warehouse searchW : AllWH) {
                             if (searchW.getWarehouseName().equals(sourceWH)) {
                                 currentSource = searchW;
+                                foundSource = true;
                             }
                         }
+
                         Warehouse currentDestination = null;
                         for (Warehouse searchW : AllWH) {
                             if (searchW.getWarehouseName().equals(destinationWH)) {
                                 currentDestination = searchW;
+                                foundDestination = true;
                             }
                         }
                         assert currentSource != null;
-                        if(currentSource.Inventory().size() == 0){
-                            System.out.println("Source Warehouse is Empty, No parts to transfer");
+
+                        if(!foundSource) {
+                            System.out.println("Source warehouse not found.");
+                        }else if(!foundDestination) {
+                            System.out.println("Destination warehouse not found.");
+                        }else if(currentSource.Inventory().size() == 0){
+                            System.out.println("Part(s) not available for transfer.");
                         }else{
                             System.out.println("Please enter the PartNumber for the part you would like to Transfer:");
                             int transpNum = Integer.parseInt(Input.next());
