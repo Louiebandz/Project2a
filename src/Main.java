@@ -2,8 +2,9 @@
 //Brittany Margelos
 //Ben Hichak
 //Luis Maldonado
+import org.w3c.dom.ls.LSOutput;
+
 import java.io.*;
-import java.sql.SQLOutput;
 import java.util.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -18,6 +19,9 @@ public class Main {
     public static void main(String[] args) throws IOException {
         Choices();
     }
+    public static final String ANSI_BLUE ="\u001B[34m";
+    public static final String ANSI_RESET="\u001B[0m";
+
 
     /**
      *
@@ -27,28 +31,26 @@ public class Main {
         ArrayList<Warehouse> AllWH = new ArrayList<Warehouse>();
 
         Warehouse mainWarehouse = new Warehouse("MainWareHouse");
+        mainWarehouse.setTxtFileName("WHMain.txt");
         fillWarehouse(mainWarehouse);
         AllWH.add(mainWarehouse);
 
-        FileInputStream VanFile = new FileInputStream("AddedSalesVans.txt");
+        FileInputStream VanFile = new FileInputStream("AddedSalesVan.txt");
         Scanner readVanLn = new Scanner(VanFile);
         while(readVanLn.hasNext()){
             String nName = readVanLn.nextLine();
             Warehouse nextVan = new Warehouse(nName);
             AllWH.add(nextVan);
+            nextVan.setTxtFileName("SaleVan" + nName + ".txt");
             fillWarehouse(nextVan);
         }
-
-
-
-
-
+        VanFile.close();
 
         Scanner Input = new Scanner(System.in);
         String Choice = "";
-
         while (!Choice.equalsIgnoreCase("Quit")) {
-            System.out.println("Please select an option: \n" + "Read: Read an InitialInventory.txt delivery file \n" + "Enter: Enter a part \n" + "Sell: Sell a part \n" + "Display: display a part \n" + "SortName: Sort and Display parts by name \n" + "SortNumber: Sort parts by part name \n" + "Transfer: Move inventory between warehouses \n" + "Create: Add sales van to fleet \n" + "Enter a choice:");
+            System.out.println("Please select an option: \n" + "Read: Read an 'initialinventory.txt' delivery file \n" + "Enter: Enter a part \n" + "Sell: Sell a part \n" + "Display: display a part \n" +
+                    "SortName: Sort and Display parts by name \n" + "SortNumber: Sort parts by part name \n" + "Transfer: Move inventory between warehouses \n" + "Create: Add sales van to fleet \n" + "Enter a choice:");
             Choice = Input.next();
             Choice = Choice.toUpperCase();
             switch (Choice) {
@@ -100,8 +102,10 @@ public class Main {
                         }
                         if (efound) {
                             mainWarehouse.Inventory().get(eIndex).setQuantity(mainWarehouse.Inventory().get(eIndex).getQuantity() + ePart.getQuantity());
+                            System.out.println("Part has been added");
                         } else {
                             mainWarehouse.Inventory().add(ePart);
+                            System.out.println("Part added successfully");
                         }
                         System.out.println("");
                     }catch(Exception e){
@@ -111,36 +115,42 @@ public class Main {
                 case "SELL":
                     DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
                     Calendar calObj = Calendar.getInstance();
+                    dateFormat.format(calObj.getTime());
 
                     System.out.println("Specify the source Warehouse:");
 
-                    System.out.println("Choices: " + getWHchoices(AllWH));
-
+                    System.out.println("Choices: " + getWHchoices(AllWH) + "\n"+ "Enter Choice exactly as represented in choices!");
+                    String sellWHname = Input.next();
+                    Warehouse currentSellWh = null;
+                    for(Warehouse searchW : AllWH){
+                        if(searchW.getWarehouseName().equals(sellWHname)){
+                            currentSellWh = searchW;
+                        }
+                    }
                     
-
-
 
                     System.out.println("\n Please enter the Part Number: ");
                     int PartNumber = Input.nextInt();
                     int uIndex = 0;
                     boolean found = false;
-                    for (int d = 0; d < WareHouse.size(); d++) {
-                        int pNumb = WareHouse.get(d).getPartNumber();
+                    assert currentSellWh != null;
+                    for (int d = 0; d < currentSellWh.Inventory().size(); d++) {
+                        int pNumb = currentSellWh.Inventory().get(d).getPartNumber();
                         if (pNumb == PartNumber) {
-                            uIndex = getIndex(WareHouse, WareHouse.get(d));
+                            uIndex = getIndex(currentSellWh.Inventory(), currentSellWh.Inventory().get(d));
                             found = true;
                         }
                     }
                     if (found) {
                         double sPrice = 0;
-                        boolean isSal = WareHouse.get(uIndex).getOnSale();
+                        boolean isSal = currentSellWh.Inventory().get(uIndex).getOnSale();
                         if (isSal) {
-                            sPrice = WareHouse.get(uIndex).getSalesPrice();
+                            sPrice = currentSellWh.Inventory().get(uIndex).getSalesPrice();
                         } else {
-                            sPrice = WareHouse.get(uIndex).getPrice();
+                            sPrice = currentSellWh.Inventory().get(uIndex).getPrice();
                         }
-                        System.out.println("\n"+ WareHouse.get(uIndex).getName() + " Price: " + sPrice + " OnSale: " + WareHouse.get(uIndex).getOnSale());
-                        WareHouse.get(uIndex).setQuantity(WareHouse.get(uIndex).getQuantity() - 1);
+                        System.out.println("\n"+ currentSellWh.Inventory().get(uIndex).getName() + " Price: " + sPrice + " OnSale: " + currentSellWh.Inventory().get(uIndex).getOnSale());
+                        currentSellWh.Inventory().get(uIndex).setQuantity(currentSellWh.Inventory().get(uIndex).getQuantity() - 1);
                         System.out.println("Time Sold:  " + calObj.getTime() + "\n");
 
                     } else {
@@ -177,22 +187,33 @@ public class Main {
 
                     break;
                 case "SORTNAME":
-                    if (WareHouse.size() > 0) {
+                    System.out.println("Specify the source Warehouse:");
+
+                    System.out.println("Choices: " + getWHchoices(AllWH) + "\n"+ "Enter Choice exactly as represented in choices!");
+                    String stNameWHname = Input.next();
+                    Warehouse currentSTname = null;
+                    for(Warehouse searchW : AllWH){
+                        if(searchW.getWarehouseName().equals(stNameWHname)){
+                            currentSTname = searchW;
+                        }
+                    }
+                    assert currentSTname != null;
+                    if (currentSTname.Inventory().size() > 0) {
                         int counts = 0;
                         while (counts < 50) {
-                            for (int a = 0, b = 1; b < WareHouse.size(); a++, b++) {
-                                String Temp1 = WareHouse.get(a).getName().toUpperCase();
-                                String Temp2 = WareHouse.get(b).getName().toUpperCase();
+                            for (int a = 0, b = 1; b < currentSTname.Inventory().size(); a++, b++) {
+                                String Temp1 = currentSTname.Inventory().get(a).getName().toUpperCase();
+                                String Temp2 = currentSTname.Inventory().get(b).getName().toUpperCase();
                                 int Value = Temp1.compareTo(Temp2);
                                 if (Value > 0) {
-                                    Collections.swap(WareHouse, a, b);
+                                    Collections.swap(currentSTname.Inventory(), a, b);
                                 }
                             }
                             counts++;
                         }
                         System.out.println("");
-                        for (int a = 0; a < WareHouse.size(); a++) {
-                            System.out.println(WareHouse.get(a).getInfo());
+                        for (int a = 0; a < currentSTname.Inventory().size(); a++) {
+                            System.out.println(currentSTname.Inventory().get(a).getInfo());
                         }
                         System.out.println("");
                     }else{
@@ -200,52 +221,121 @@ public class Main {
                     }
                     break;
                 case "SORTNUMBER":
-                    if(WareHouse.size() > 0) {
+                    System.out.println("Specify the source Warehouse:");
+
+                    System.out.println("Choices: " + getWHchoices(AllWH) + "\n"+ "Enter Choice exactly as represented in choices!");
+                    String stNumWHname = Input.next();
+                    Warehouse currentStnumWh = null;
+                    for(Warehouse searchW : AllWH){
+                        if(searchW.getWarehouseName().equals(stNumWHname)){
+                            currentStnumWh = searchW;
+                        }
+                    }
+
+                    assert currentStnumWh != null;
+                    if(currentStnumWh.Inventory().size() > 0) {
                         int count = 0;
                         while (count < 50) {
-                            for (int a = 0, b = 1; b < WareHouse.size(); a++, b++) {
-                                int Temp1 = WareHouse.get(a).getPartNumber();
-                                int Temp2 = WareHouse.get(b).getPartNumber();
+                            for (int a = 0, b = 1; b < currentStnumWh.Inventory().size(); a++, b++) {
+                                int Temp1 = currentStnumWh.Inventory().get(a).getPartNumber();
+                                int Temp2 = currentStnumWh.Inventory().get(b).getPartNumber();
                                 if (Temp1 > Temp2) {
-                                    Collections.swap(WareHouse, a, b);
+                                    Collections.swap(currentStnumWh.Inventory(), a, b);
                                 }
                             }
                             count++;
                         }
                         System.out.println("");
-                        for (int a = 0; a < WareHouse.size(); a++) {
-                            System.out.println(WareHouse.get(a).getInfo());
+                        for (int a = 0; a < currentStnumWh.Inventory().size(); a++) {
+                            System.out.println(currentStnumWh.Inventory().get(a).getInfo());
                         }
                         System.out.println("");
                     }else{
                         System.err.println("Warehouse is empty."+"\n");
                     }
                     break;
-                case "QUIT":
-                    File FileOut = new File("warehouseDB.txt");
-                    FileWriter fWriter = new FileWriter(FileOut);
-                    PrintWriter pWriter = new PrintWriter(fWriter);
-                    for (int k = 0; k < WareHouse.size(); k++) {
-                        pWriter.println(WareHouse.get(k).getInfo());
-                    }
-                    pWriter.close() ;
-                    break;
-                case "TRANSFER":
-                    break;
-
                 case "CREATE":
                     System.out.println("Please enter the name of the sales van \n" + "Example: 'SalesVan' + input = SalesVan(input)");
                     String whName = Input.next();
                     Warehouse newWarehouse = new Warehouse("SalesVan"+ whName);
                     AllWH.add(newWarehouse);
-                    System.out.println("New sales van "+ newWarehouse.getWarehouseName()+ " has been created successfully.");
+                    newWarehouse.setTxtFileName("SaleVan" + whName+ ".txt");
+                    System.out.println("\n New sales van "+ newWarehouse.getWarehouseName()+ " has been created successfully.\n");
                     final Formatter x;
                     x = new Formatter("SaleVan" + whName +".txt");
                     File VanOut = new File("AddedSalesVan.txt");
                     FileWriter vfWriter = new FileWriter(VanOut);
                     PrintWriter vpWriter = new PrintWriter(vfWriter);
                     vpWriter.println(whName);
+                    x.close();
+                    vfWriter.close();
                     vpWriter.close();
+                    break;
+                case "TRANSFER":
+                    if(AllWH.size() >= 2) {
+                        System.out.println("Choices: " + getWHchoices(AllWH) + "\n" + "Enter Choices exactly as represented in choices!\n");
+                        System.out.println("Please specify the source Warehouse:");
+                        String sourceWH = Input.next();
+                        System.out.println("Please Specify the destination Warehouse:");
+                        String destinationWH = Input.next();
+
+                        Warehouse currentSource = null;
+                        for (Warehouse searchW : AllWH) {
+                            if (searchW.getWarehouseName().equals(sourceWH)) {
+                                currentSource = searchW;
+                            }
+                        }
+                        Warehouse currentDestination = null;
+                        for (Warehouse searchW : AllWH) {
+                            if (searchW.getWarehouseName().equals(destinationWH)) {
+                                currentDestination = searchW;
+                            }
+                        }
+                        assert currentSource != null;
+                        if(currentSource.Inventory().size() == 0){
+                            System.out.println("Source Warehouse is Empty, No parts to transfer");
+                        }else{
+                            System.out.println("Please enter the PartNumber for the part you would like to Transfer:");
+                            int transpNum = Integer.parseInt(Input.next());
+                            BikePart transPart = null;
+                            boolean tpFound = false;
+                            for(BikePart nxtPart : currentSource.Inventory()){
+                                if(nxtPart.getPartNumber() == transpNum){
+                                    transPart = nxtPart;
+                                    tpFound = true;
+                                }
+                            }
+                            if(tpFound){
+                                System.out.println("Enter the quantity you would like to Transfer:");
+                                int transQuant = Input.nextInt();
+                                if(transPart.getQuantity() != 0 || transPart.getQuantity() <= transQuant){
+                                    transPart.setQuantity(transPart.getQuantity()- transQuant);
+                                    BikePart newTpart = new BikePart(transPart.getInfo());
+                                    assert currentDestination != null;
+                                    currentDestination.addToInventory(newTpart);
+                                    newTpart.setQuantity(transQuant);
+                                    System.out.println("Part Transfer Successful.");
+                                }else{
+                                    System.out.println("Quantity exceeds available supply, available \n amount of specified part: " + transPart.getQuantity());
+                                }
+                            }else{
+                                System.out.println("Part is not available for transfer.");
+                            }
+                        }
+
+
+
+
+
+
+
+                    }else{
+                        System.out.println("Error!!, Must be at least 2 Warehouses Present.");
+                    }
+                    System.out.println("");
+                    break;
+                case "QUIT":
+                   writeTofile(AllWH);
                     break;
 
                 default:
@@ -283,8 +373,20 @@ public class Main {
         for(Warehouse nWare : AllWH){
             String nWareName = nWare.getWarehouseName();
             choices.append(nWareName);
+            choices.append(",");
         }
         return choices.toString();
+    }
+    public static void writeTofile(ArrayList<Warehouse> ALLWH) throws IOException {
+        for(Warehouse nxtWrite : ALLWH){
+            File quitOut = new File(nxtWrite.getTxtFileName());
+            FileWriter qWriter = new FileWriter(quitOut);
+            PrintWriter qpWriter = new PrintWriter(qWriter);
+            for(int q = 0; q < nxtWrite.Inventory().size(); q++){
+                qpWriter.println(nxtWrite.Inventory().get(q).getInfo());
+            }
+            qpWriter.close();
+        }
     }
 }
 
