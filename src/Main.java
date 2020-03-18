@@ -307,34 +307,42 @@ public class Main {
                             break;
 
 
-                        }else{
-                            System.out.println("Please enter the PartNumber for the part you would like to Transfer:");
-                            int transpNum = Integer.parseInt(Input.next());
-                            BikePart transPart = null;
-                            boolean tpFound = false;
-                            for(BikePart nxtPart : currentSource.Inventory()){
-                                if(nxtPart.getPartNumber() == transpNum){
-                                    transPart = nxtPart;
-                                    tpFound = true;
+                        }else {
+                            System.out.println("How many parts would you like to transfer?: \n " +
+                                    "Unique Parts available for transfer: " + currentSource.Inventory().size() );
+                            String Amount = Input.next();
+
+                            int numAmount = Integer.parseInt(Amount);
+                            for (int a = 0; a < numAmount; a++) {
+                                System.out.println("Please enter the PartNumber for the part you would like to Transfer:");
+                                int transpNum = Integer.parseInt(Input.next());
+                                BikePart transPart = null;
+                                boolean tpFound = false;
+                                for (BikePart nxtPart : currentSource.Inventory()) {
+                                    if (nxtPart.getPartNumber() == transpNum) {
+                                        transPart = nxtPart;
+                                        tpFound = true;
+                                    }
                                 }
-                            }
-                            if(tpFound){
-                                System.out.println("Enter the quantity you would like to Transfer:");
-                                int transQuant = Input.nextInt();
-                                if(transPart.getQuantity() > 0 && transPart.getQuantity() >= transQuant){
-                                    transPart.setQuantity(transPart.getQuantity()- transQuant);
-                                    BikePart newTpart = new BikePart(transPart.getInfo());
-                                    assert currentDestination != null;
-                                    currentDestination.addToInventory(newTpart);
-                                    newTpart.setQuantity(transQuant);
-                                    System.out.println("Part Transfer Successful.");
-                                }else{
-                                    System.out.println("Quantity exceeds available supply, available \n amount of specified part: " + transPart.getQuantity());
+                                if (tpFound) {
+                                    System.out.println("Enter the quantity you would like to Transfer:");
+                                    int transQuant = Input.nextInt();
+                                    if (transPart.getQuantity() > 0 && transPart.getQuantity() >= transQuant) {
+                                        transPart.setQuantity(transPart.getQuantity() - transQuant);
+                                        BikePart newTpart = new BikePart(transPart.getInfo());
+                                        assert currentDestination != null;
+                                        currentDestination.addToInventory(newTpart);
+                                        newTpart.setQuantity(transQuant);
+                                        System.out.println("Part Transfer Successful.");
+                                    } else {
+                                        System.out.println("Quantity exceeds available supply, available \n amount of specified part: " + transPart.getQuantity());
+                                    }
+                                } else {
+                                    System.out.println("Part is not available for transfer.");
                                 }
-                            }else{
-                                System.out.println("Part is not available for transfer.");
                             }
                         }
+
                     }else{
                         System.out.println("Error!!, Must be at least 2 Warehouses Present.");
                     }
