@@ -39,7 +39,7 @@ public class Main {
             String nName = readVanLn.nextLine();
             Warehouse nextVan = new Warehouse(nName);
             AllWH.add(nextVan);
-            nextVan.setTxtFileName(nName + ".txt");
+            nextVan.setTxtFileName("SaleVan" + nName + ".txt");
             fillWarehouse(nextVan);
         }
         VanFile.close();
