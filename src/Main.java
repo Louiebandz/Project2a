@@ -79,7 +79,6 @@ public class Main {
                             }
 
                         }
-
                         System.out.println(inFileName + " was read successfully. \n");
                     } catch (FileNotFoundException e) {
                         System.err.println("File does not exist.");
@@ -102,7 +101,7 @@ public class Main {
                         }
                         if (efound) {
                             mainWarehouse.Inventory().get(eIndex).setQuantity(mainWarehouse.Inventory().get(eIndex).getQuantity() + ePart.getQuantity());
-                            System.out.println("Part has been added");
+                            System.out.println("Part Quantity updated");
                         } else {
                             mainWarehouse.Inventory().add(ePart);
                             System.out.println("Part added successfully");
@@ -335,7 +334,7 @@ public class Main {
                                     }
                                 }
                                 if (tpFound) {
-                                    System.out.println("Enter the quantity you would like to Transfer:");
+                                    System.out.println("Enter the quantity you would like to Transfer: \n (Parts Available for Transfer: "+ transPart.getQuantity() + ")");
                                     int transQuant = Input.nextInt();
                                     if (transPart.getQuantity() > 0 && transPart.getQuantity() >= transQuant) {
                                         boolean dpFound = false;
@@ -354,14 +353,8 @@ public class Main {
                                             currentDestination.Inventory().add(transPart);
                                         }
                                         sourcePart.setQuantity(sourcePart.getQuantity()-transQuant);
-                                        /**transPart.setQuantity(transPart.getQuantity() - transQuant);
-                                        BikePart newTpart = new BikePart(transPart.getInfo());
-                                        assert currentDestination != null;
-                                        currentDestination.addToInventory(newTpart);
-                                        newTpart.setQuantity(transQuant);
-                                        System.out.println("Part Transfer Successful."); */
                                     } else {
-                                        System.out.println("Quantity exceeds available supply, available \n amount of specified part: " + transPart.getQuantity());
+                                        System.out.println("Quantity exceeds available supply");
                                     }
                                 } else {
                                     System.out.println("Part is not available for transfer.");
