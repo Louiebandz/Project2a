@@ -27,7 +27,7 @@ public class Main {
      */
     public static void Choices() throws IOException {
         ArrayList<Warehouse> AllWH = new ArrayList<Warehouse>();
-
+        ArrayList<String> CreatedWH = new ArrayList<String>();
         Warehouse mainWarehouse = new Warehouse("MainWareHouse");
         mainWarehouse.setTxtFileName("WHMain.txt");
         fillWarehouse(mainWarehouse);
@@ -36,9 +36,11 @@ public class Main {
         FileInputStream VanFile = new FileInputStream("AddedSalesVan.txt");
         Scanner readVanLn = new Scanner(VanFile);
         while(readVanLn.hasNext()){
-            String nName = readVanLn.nextLine();
+            String nName = "SaleVan" + readVanLn.nextLine();
             Warehouse nextVan = new Warehouse(nName);
             AllWH.add(nextVan);
+            String whName = nextVan.getWarehouseName().substring(7);
+            CreatedWH.add(whName);
             nextVan.setTxtFileName(nName + ".txt");
             fillWarehouse(nextVan);
         }
@@ -255,12 +257,13 @@ public class Main {
                 case "CREATE":
                     System.out.println("Please enter the name of the sales van \n" + "Example: 'SalesVan' + input = SalesVan(input)");
                     String whName = Input.next();
+                    CreatedWH.add(whName);
                     String fullName = "SaleVan" + whName;
                     Warehouse newWarehouse = new Warehouse(fullName);
                     AllWH.add(newWarehouse);
                     newWarehouse.setTxtFileName(fullName+ ".txt");
                     System.out.println("\n New sales van "+ newWarehouse.getWarehouseName()+ " has been created successfully.\n");
-                    final Formatter x;
+                    /**final Formatter x;
                     x = new Formatter(fullName+".txt");
                     File VanOut = new File("AddedSalesVan.txt");
                     FileWriter vfWriter = new FileWriter(VanOut);
@@ -269,7 +272,12 @@ public class Main {
                     x.close();
                     vfWriter.close();
                     vpWriter.close();
-                    break;
+                    */
+
+
+
+
+                     break;
                 case "TRANSFER":
                     if(AllWH.size() >= 2) {
                         System.out.println("Choices: " + getWHchoices(AllWH) + "\n" + "Enter Choices exactly as represented in choices!\n");
@@ -316,11 +324,13 @@ public class Main {
                             for (int a = 0; a < numAmount; a++) {
                                 System.out.println("Please enter the PartNumber for the part you would like to Transfer:");
                                 int transpNum = Integer.parseInt(Input.next());
+                                BikePart sourcePart = null;
                                 BikePart transPart = null;
                                 boolean tpFound = false;
                                 for (BikePart nxtPart : currentSource.Inventory()) {
                                     if (nxtPart.getPartNumber() == transpNum) {
-                                        transPart = nxtPart;
+                                        sourcePart = nxtPart;
+                                        transPart = new BikePart(sourcePart.getInfo());
                                         tpFound = true;
                                     }
                                 }
@@ -328,12 +338,28 @@ public class Main {
                                     System.out.println("Enter the quantity you would like to Transfer:");
                                     int transQuant = Input.nextInt();
                                     if (transPart.getQuantity() > 0 && transPart.getQuantity() >= transQuant) {
-                                        transPart.setQuantity(transPart.getQuantity() - transQuant);
+                                        boolean dpFound = false;
+                                        int tIndex = 0;
+                                        for(int h = 0; h< currentDestination.Inventory().size();h++){
+                                            BikePart nxtP = currentDestination.Inventory().get(h);
+                                            if(nxtP.getPartNumber() == transpNum){
+                                                dpFound = true;
+                                                tIndex = h;
+                                            }
+                                        }
+                                        if(dpFound){
+                                            currentDestination.Inventory().get(tIndex).setQuantity(currentDestination.Inventory().get(tIndex).getQuantity()+transQuant);
+                                        }else{
+                                            transPart.setQuantity(transQuant);
+                                            currentDestination.Inventory().add(transPart);
+                                        }
+                                        sourcePart.setQuantity(sourcePart.getQuantity()-transQuant);
+                                        /**transPart.setQuantity(transPart.getQuantity() - transQuant);
                                         BikePart newTpart = new BikePart(transPart.getInfo());
                                         assert currentDestination != null;
                                         currentDestination.addToInventory(newTpart);
                                         newTpart.setQuantity(transQuant);
-                                        System.out.println("Part Transfer Successful.");
+                                        System.out.println("Part Transfer Successful."); */
                                     } else {
                                         System.out.println("Quantity exceeds available supply, available \n amount of specified part: " + transPart.getQuantity());
                                     }
@@ -350,6 +376,13 @@ public class Main {
                     break;
                 case "QUIT":
                    writeTofile(AllWH);
+                    File quitCreate = new File("AddedSalesVan.txt");
+                    FileWriter cWriter = new FileWriter(quitCreate);
+                    PrintWriter qcWriter = new PrintWriter(cWriter);
+                   for(String nxtName : CreatedWH){
+                      qcWriter.println(nxtName);
+                   }
+                    qcWriter.close();
                     break;
 
                 default:
