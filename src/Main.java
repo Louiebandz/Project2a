@@ -79,7 +79,7 @@ public class Main {
                             }
 
                         }
-                        System.out.println(inFileName + " was read successfully. \n");
+                        System.out.println(inFileName + " was read successfully, \n inventory added to MainWareHouse" + "\n");
                     } catch (FileNotFoundException e) {
                         System.err.println("File does not exist.");
                         System.out.println("");
@@ -120,40 +120,45 @@ public class Main {
 
                     System.out.println("Choices: " + getWHchoices(AllWH) + "\n"+ "Enter Choice exactly as represented in choices!");
                     String sellWHname = Input.next();
-                    Warehouse currentSellWh = null;
-                    for(Warehouse searchW : AllWH){
-                        if(searchW.getWarehouseName().equals(sellWHname)){
-                            currentSellWh = searchW;
+                    boolean NameCheckSell = CheckwarehouseChoice(AllWH,sellWHname);
+                    if(NameCheckSell) {
+                        Warehouse currentSellWh = null;
+                        for (Warehouse searchW : AllWH) {
+                            if (searchW.getWarehouseName().equals(sellWHname)) {
+                                currentSellWh = searchW;
+                            }
                         }
-                    }
-                    
 
-                    System.out.println("\n Please enter the Part Number: ");
-                    int PartNumber = Input.nextInt();
-                    int uIndex = 0;
-                    boolean found = false;
-                    assert currentSellWh != null;
-                    for (int d = 0; d < currentSellWh.Inventory().size(); d++) {
-                        int pNumb = currentSellWh.Inventory().get(d).getPartNumber();
-                        if (pNumb == PartNumber) {
-                            uIndex = getIndex(currentSellWh.Inventory(), currentSellWh.Inventory().get(d));
-                            found = true;
+
+                        System.out.println("\n Please enter the Part Number: ");
+                        int PartNumber = Input.nextInt();
+                        int uIndex = 0;
+                        boolean found = false;
+                        assert currentSellWh != null;
+                        for (int d = 0; d < currentSellWh.Inventory().size(); d++) {
+                            int pNumb = currentSellWh.Inventory().get(d).getPartNumber();
+                            if (pNumb == PartNumber) {
+                                uIndex = getIndex(currentSellWh.Inventory(), currentSellWh.Inventory().get(d));
+                                found = true;
+                            }
                         }
-                    }
-                    if (found) {
-                        double sPrice = 0;
-                        boolean isSal = currentSellWh.Inventory().get(uIndex).getOnSale();
-                        if (isSal) {
-                            sPrice = currentSellWh.Inventory().get(uIndex).getSalesPrice();
+                        if (found) {
+                            double sPrice = 0;
+                            boolean isSal = currentSellWh.Inventory().get(uIndex).getOnSale();
+                            if (isSal) {
+                                sPrice = currentSellWh.Inventory().get(uIndex).getSalesPrice();
+                            } else {
+                                sPrice = currentSellWh.Inventory().get(uIndex).getPrice();
+                            }
+                            System.out.println("\n" + currentSellWh.Inventory().get(uIndex).getName() + " Price: " + sPrice + " OnSale: " + currentSellWh.Inventory().get(uIndex).getOnSale());
+                            currentSellWh.Inventory().get(uIndex).setQuantity(currentSellWh.Inventory().get(uIndex).getQuantity() - 1);
+                            System.out.println("Time Sold:  " + calObj.getTime() + "\n");
+
                         } else {
-                            sPrice = currentSellWh.Inventory().get(uIndex).getPrice();
+                            System.err.println("Part was not found!" + "\n");
                         }
-                        System.out.println("\n"+ currentSellWh.Inventory().get(uIndex).getName() + " Price: " + sPrice + " OnSale: " + currentSellWh.Inventory().get(uIndex).getOnSale());
-                        currentSellWh.Inventory().get(uIndex).setQuantity(currentSellWh.Inventory().get(uIndex).getQuantity() - 1);
-                        System.out.println("Time Sold:  " + calObj.getTime() + "\n");
-
-                    } else {
-                        System.err.println("Part was not found!" + "\n");
+                    }else{
+                        System.out.println("Incorrect WareHouse name! \n");
                     }
 
                     break;
@@ -187,70 +192,79 @@ public class Main {
                     break;
                 case "SORTNAME":
                     System.out.println("Specify the source Warehouse:");
-
                     System.out.println("Choices: " + getWHchoices(AllWH) + "\n"+ "Enter Choice exactly as represented in choices!");
                     String stNameWHname = Input.next();
-                    Warehouse currentSTname = null;
-                    for(Warehouse searchW : AllWH){
-                        if(searchW.getWarehouseName().equals(stNameWHname)){
-                            currentSTname = searchW;
-                        }
-                    }
-                    assert currentSTname != null;
-                    if (currentSTname.Inventory().size() > 0) {
-                        int counts = 0;
-                        while (counts < 50) {
-                            for (int a = 0, b = 1; b < currentSTname.Inventory().size(); a++, b++) {
-                                String Temp1 = currentSTname.Inventory().get(a).getName().toUpperCase();
-                                String Temp2 = currentSTname.Inventory().get(b).getName().toUpperCase();
-                                int Value = Temp1.compareTo(Temp2);
-                                if (Value > 0) {
-                                    Collections.swap(currentSTname.Inventory(), a, b);
-                                }
+                    boolean NameCheckSTName = CheckwarehouseChoice(AllWH,stNameWHname);
+                    if(NameCheckSTName) {
+                        Warehouse currentSTname = null;
+
+                        for (Warehouse searchW : AllWH) {
+                            if (searchW.getWarehouseName().equals(stNameWHname)) {
+                                currentSTname = searchW;
                             }
-                            counts++;
                         }
-                        System.out.println("");
-                        for (int a = 0; a < currentSTname.Inventory().size(); a++) {
-                            System.out.println(currentSTname.Inventory().get(a).getInfo());
+                        assert currentSTname != null;
+                        if (currentSTname.Inventory().size() > 0) {
+                            int counts = 0;
+                            while (counts < 50) {
+                                for (int a = 0, b = 1; b < currentSTname.Inventory().size(); a++, b++) {
+                                    String Temp1 = currentSTname.Inventory().get(a).getName().toUpperCase();
+                                    String Temp2 = currentSTname.Inventory().get(b).getName().toUpperCase();
+                                    int Value = Temp1.compareTo(Temp2);
+                                    if (Value > 0) {
+                                        Collections.swap(currentSTname.Inventory(), a, b);
+                                    }
+                                }
+                                counts++;
+                            }
+                            System.out.println("");
+                            for (int a = 0; a < currentSTname.Inventory().size(); a++) {
+                                System.out.println(currentSTname.Inventory().get(a).getInfo());
+                            }
+                            System.out.println("");
+                        } else {
+                            System.err.println("Warehouse is empty." + "\n");
                         }
-                        System.out.println("");
                     }else{
-                        System.err.println("Warehouse is empty." + "\n");
+                        System.err.println("Incorrect WareHouse Name!"+ "\n");
                     }
                     break;
                 case "SORTNUMBER":
                     System.out.println("Specify the source Warehouse:");
-
                     System.out.println("Choices: " + getWHchoices(AllWH) + "\n"+ "Enter Choice exactly as represented in choices!");
-                    String stNumWHname = Input.next();
-                    Warehouse currentStnumWh = null;
-                    for(Warehouse searchW : AllWH){
-                        if(searchW.getWarehouseName().equals(stNumWHname)){
-                            currentStnumWh = searchW;
-                        }
-                    }
-
-                    assert currentStnumWh != null;
-                    if(currentStnumWh.Inventory().size() > 0) {
-                        int count = 0;
-                        while (count < 50) {
-                            for (int a = 0, b = 1; b < currentStnumWh.Inventory().size(); a++, b++) {
-                                int Temp1 = currentStnumWh.Inventory().get(a).getPartNumber();
-                                int Temp2 = currentStnumWh.Inventory().get(b).getPartNumber();
-                                if (Temp1 > Temp2) {
-                                    Collections.swap(currentStnumWh.Inventory(), a, b);
-                                }
+                    String stNumWHnum = Input.next();
+                    boolean NameCheckSTnum = CheckwarehouseChoice(AllWH,stNumWHnum);
+                    if(NameCheckSTnum) {
+                        Warehouse currentStnumWh = null;
+                        for (Warehouse searchW : AllWH) {
+                            if (searchW.getWarehouseName().equals(stNumWHnum)) {
+                                currentStnumWh = searchW;
                             }
-                            count++;
                         }
-                        System.out.println("");
-                        for (int a = 0; a < currentStnumWh.Inventory().size(); a++) {
-                            System.out.println(currentStnumWh.Inventory().get(a).getInfo());
+
+                        assert currentStnumWh != null;
+                        if (currentStnumWh.Inventory().size() > 0) {
+                            int count = 0;
+                            while (count < 50) {
+                                for (int a = 0, b = 1; b < currentStnumWh.Inventory().size(); a++, b++) {
+                                    int Temp1 = currentStnumWh.Inventory().get(a).getPartNumber();
+                                    int Temp2 = currentStnumWh.Inventory().get(b).getPartNumber();
+                                    if (Temp1 > Temp2) {
+                                        Collections.swap(currentStnumWh.Inventory(), a, b);
+                                    }
+                                }
+                                count++;
+                            }
+                            System.out.println("");
+                            for (int a = 0; a < currentStnumWh.Inventory().size(); a++) {
+                                System.out.println(currentStnumWh.Inventory().get(a).getInfo());
+                            }
+                            System.out.println("");
+                        } else {
+                            System.err.println("Warehouse is empty." + "\n");
                         }
-                        System.out.println("");
                     }else{
-                        System.err.println("Warehouse is empty."+"\n");
+                        System.err.println("Incorrect Warehouse Name!"+ "\n");
                     }
                     break;
                 case "CREATE":
@@ -262,20 +276,8 @@ public class Main {
                     AllWH.add(newWarehouse);
                     newWarehouse.setTxtFileName(fullName+ ".txt");
                     System.out.println("\n New sales van "+ newWarehouse.getWarehouseName()+ " has been created successfully.\n");
-                    /**final Formatter x;
+                    final Formatter x;
                     x = new Formatter(fullName+".txt");
-                    File VanOut = new File("AddedSalesVan.txt");
-                    FileWriter vfWriter = new FileWriter(VanOut);
-                    PrintWriter vpWriter = new PrintWriter(vfWriter);
-                    vpWriter.println(fullName);
-                    x.close();
-                    vfWriter.close();
-                    vpWriter.close();
-                    */
-
-
-
-
                      break;
                 case "TRANSFER":
                     if(AllWH.size() >= 2) {
@@ -312,52 +314,72 @@ public class Main {
                         if(!foundDestination){
                             System.out.println("Destination warehouse not found. \n");
                             break;
-
-
                         }else {
                             System.out.println("How many parts would you like to transfer?: \n " +
-                                    "Unique Parts available for transfer: " + currentSource.Inventory().size() );
+                                    "Unique Parts available for transfer: " + currentSource.Inventory().size() + "\n" +
+                                    "Input 'ALL' to move all inventory");
                             String Amount = Input.next();
-
-                            int numAmount = Integer.parseInt(Amount);
-                            for (int a = 0; a < numAmount; a++) {
-                                System.out.println("Please enter the PartNumber for the part you would like to Transfer:");
-                                int transpNum = Integer.parseInt(Input.next());
-                                BikePart sourcePart = null;
-                                BikePart transPart = null;
-                                boolean tpFound = false;
-                                for (BikePart nxtPart : currentSource.Inventory()) {
-                                    if (nxtPart.getPartNumber() == transpNum) {
-                                        sourcePart = nxtPart;
-                                        transPart = new BikePart(sourcePart.getInfo());
-                                        tpFound = true;
+                            if (Amount.equalsIgnoreCase("All")) {
+                                for (BikePart nxtP : currentSource.Inventory()) {
+                                    BikePart nTransfer = new BikePart(nxtP.getInfo());
+                                    nxtP.setQuantity(0);
+                                    boolean tPartFound = false;
+                                    int dIndex = 0;
+                                    for (int j = 0; j < currentDestination.Inventory().size(); j++) {
+                                        if (nxtP.getPartNumber() == currentDestination.Inventory().get(j).getPartNumber()) {
+                                            tPartFound = true;
+                                            dIndex = j;
+                                        }
+                                    }
+                                    if (!tPartFound) {
+                                        currentDestination.Inventory().add(nTransfer);
+                                    } else {
+                                        currentDestination.Inventory().get(dIndex).setQuantity(nTransfer.getQuantity());
                                     }
                                 }
-                                if (tpFound) {
-                                    System.out.println("Enter the quantity you would like to Transfer: \n (Parts Available for Transfer: "+ transPart.getQuantity() + ")");
-                                    int transQuant = Input.nextInt();
-                                    if (transPart.getQuantity() > 0 && transPart.getQuantity() >= transQuant) {
-                                        boolean dpFound = false;
-                                        int tIndex = 0;
-                                        for(int h = 0; h< currentDestination.Inventory().size();h++){
-                                            BikePart nxtP = currentDestination.Inventory().get(h);
-                                            if(nxtP.getPartNumber() == transpNum){
-                                                dpFound = true;
-                                                tIndex = h;
-                                            }
+                                System.out.println("All parts transfered from "+ currentSource.getWarehouseName()+" to "+currentDestination.getWarehouseName()+ "\n");
+                                break;
+                            } else {
+                                int numAmount = Integer.parseInt(Amount);
+                                for (int a = 0; a < numAmount; a++) {
+                                    System.out.println("Please enter the PartNumber for the next part you would like to Transfer:");
+                                    int transpNum = Integer.parseInt(Input.next());
+                                    BikePart sourcePart = null;
+                                    BikePart transPart = null;
+                                    boolean tpFound = false;
+                                    for (BikePart nxtPart : currentSource.Inventory()) {
+                                        if (nxtPart.getPartNumber() == transpNum) {
+                                            sourcePart = nxtPart;
+                                            transPart = new BikePart(sourcePart.getInfo());
+                                            tpFound = true;
                                         }
-                                        if(dpFound){
-                                            currentDestination.Inventory().get(tIndex).setQuantity(currentDestination.Inventory().get(tIndex).getQuantity()+transQuant);
-                                        }else{
-                                            transPart.setQuantity(transQuant);
-                                            currentDestination.Inventory().add(transPart);
-                                        }
-                                        sourcePart.setQuantity(sourcePart.getQuantity()-transQuant);
-                                    } else {
-                                        System.out.println("Quantity exceeds available supply");
                                     }
-                                } else {
-                                    System.out.println("Part is not available for transfer.");
+                                    if (tpFound) {
+                                        System.out.println("Enter the quantity you would like to Transfer: \n (Parts Available for Transfer: " + transPart.getQuantity() + ")");
+                                        int transQuant = Input.nextInt();
+                                        if (transPart.getQuantity() > 0 && transPart.getQuantity() >= transQuant) {
+                                            boolean dpFound = false;
+                                            int tIndex = 0;
+                                            for (int h = 0; h < currentDestination.Inventory().size(); h++) {
+                                                BikePart nxtP = currentDestination.Inventory().get(h);
+                                                if (nxtP.getPartNumber() == transpNum) {
+                                                    dpFound = true;
+                                                    tIndex = h;
+                                                }
+                                            }
+                                            if (dpFound) {
+                                                currentDestination.Inventory().get(tIndex).setQuantity(currentDestination.Inventory().get(tIndex).getQuantity() + transQuant);
+                                            } else {
+                                                transPart.setQuantity(transQuant);
+                                                currentDestination.Inventory().add(transPart);
+                                            }
+                                            sourcePart.setQuantity(sourcePart.getQuantity() - transQuant);
+                                        } else {
+                                            System.out.println("Quantity exceeds available supply");
+                                        }
+                                    } else {
+                                        System.out.println("Part is not available for transfer.");
+                                    }
                                 }
                             }
                         }
@@ -427,6 +449,17 @@ public class Main {
             }
             qpWriter.close();
         }
+    }
+    public static boolean CheckwarehouseChoice(ArrayList<Warehouse> AllWH,String choice){
+        boolean cFound = false;
+        for(Warehouse nWH : AllWH){
+            String nName = nWH.getWarehouseName();
+            if(nName.equals(choice)){
+                cFound = true;
+                break;
+            }
+        }
+        return cFound;
     }
 }
 
